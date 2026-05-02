@@ -1,385 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Dangerously Powerful Women</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <title>Smart Quote Generator</title>
 
-  :root {
-    --bg: #0e0a0f;
-    --surface: #1a1020;
-    --border: rgba(212, 83, 126, 0.2);
-    --pink: #D4537E;
-    --pink-light: #ED93B1;
-    --pink-pale: rgba(212, 83, 126, 0.08);
-    --text: #f5eef2;
-    --muted: #9a8a94;
-    --pill-bg: rgba(212, 83, 126, 0.12);
-  }
+  <style>
+    body {
+      background: #0f0f0f;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+      margin-top: 50px;
+    }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem 1rem;
-    position: relative;
-    overflow-x: hidden;
-  }
+    h1 {
+      margin-bottom: 20px;
+    }
 
-  body::before {
-    content: '';
-    position: fixed;
-    top: -200px; right: -200px;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(212,83,126,0.12) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #222;
+      color: white;
+    }
 
-  body::after {
-    content: '';
-    position: fixed;
-    bottom: -200px; left: -100px;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(115,40,80,0.1) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
+    button:hover {
+      background: #444;
+    }
 
-  .container {
-    width: 100%;
-    max-width: 680px;
-    position: relative;
-    z-index: 1;
-  }
+    .active {
+      background: #ff4d6d;
+    }
 
-  header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-    animation: fadeUp 0.7s ease both;
-  }
+    #quote {
+      font-size: 22px;
+      margin: 30px;
+    }
 
-  .eyebrow {
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--pink);
-    font-weight: 500;
-    margin-bottom: 0.75rem;
-  }
+    #author {
+      font-weight: bold;
+    }
 
-  h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(28px, 6vw, 44px);
-    font-weight: 700;
-    line-height: 1.15;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-  }
+    #meaning {
+      color: #aaa;
+      margin-top: 10px;
+    }
+  </style>
 
-  h1 em {
-    font-style: italic;
-    color: var(--pink-light);
-  }
-
-  .subtitle {
-    font-size: 13px;
-    color: var(--muted);
-    font-weight: 300;
-  }
-
-  .tags {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 2rem;
-    animation: fadeUp 0.7s 0.1s ease both;
-  }
-
-  .tag {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 5px 14px;
-    border-radius: 20px;
-    border: 0.5px solid var(--border);
-    color: var(--muted);
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.04em;
-  }
-
-  .tag:hover { border-color: var(--pink-light); color: var(--pink-light); }
-  .tag.active { background: var(--pill-bg); color: var(--pink-light); border-color: var(--pink); }
-
-  .quote-card {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: 20px;
-    padding: 2.5rem;
-    margin-bottom: 1.5rem;
-    min-height: 240px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    animation: fadeUp 0.7s 0.2s ease both;
-    transition: opacity 0.35s ease, transform 0.35s ease;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .quote-card::before {
-    content: '\201C';
-    font-family: 'Playfair Display', serif;
-    font-size: 120px;
-    color: rgba(212,83,126,0.07);
-    position: absolute;
-    top: -10px; left: 20px;
-    line-height: 1;
-    pointer-events: none;
-  }
-
-  .quote-card.fade { opacity: 0; transform: translateY(8px); }
-
-  .quote-text {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(17px, 3vw, 22px);
-    line-height: 1.65;
-    color: var(--text);
-    margin-bottom: 2rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  .meta {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    border-top: 0.5px solid var(--border);
-    padding-top: 1.25rem;
-  }
-
-  .avatar {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: var(--pill-bg);
-    border: 0.5px solid var(--pink);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--pink-light);
-    flex-shrink: 0;
-  }
-
-  .name {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 2px;
-  }
-
-  .field { font-size: 12px; color: var(--muted); margin-bottom: 5px; }
-
-  .era-pill {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 500;
-    padding: 2px 10px;
-    border-radius: 20px;
-    background: var(--pill-bg);
-    color: var(--pink-light);
-    border: 0.5px solid var(--border);
-    letter-spacing: 0.04em;
-  }
-
-  .controls {
-    display: flex;
-    gap: 10px;
-    animation: fadeUp 0.7s 0.3s ease both;
-  }
-
-  .btn-next {
-    flex: 1;
-    padding: 14px;
-    background: var(--pink);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: opacity 0.15s, transform 0.1s;
-    letter-spacing: 0.02em;
-  }
-
-  .btn-next:hover { opacity: 0.88; }
-  .btn-next:active { transform: scale(0.98); }
-
-  .btn-shuffle {
-    padding: 14px 20px;
-    background: transparent;
-    color: var(--pink-light);
-    border: 0.5px solid var(--border);
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: background 0.15s;
-    letter-spacing: 0.02em;
-  }
-
-  .btn-shuffle:hover { background: var(--pill-bg); }
-
-  .counter {
-    text-align: center;
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 1rem;
-    letter-spacing: 0.06em;
-    animation: fadeUp 0.7s 0.35s ease both;
-  }
-
-  footer {
-    margin-top: 2.5rem;
-    text-align: center;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-    opacity: 0.6;
-    animation: fadeUp 0.7s 0.4s ease both;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @media (max-width: 480px) {
-    .quote-card { padding: 1.75rem 1.25rem; }
-    .controls { flex-direction: column; }
-  }
-</style>
 </head>
+
 <body>
 
-<div class="container">
-  <header>
-    <p class="eyebrow">Quote Generator</p>
-    <h1>Dangerously<br/><em>Powerful Women</em></h1>
-    <p class="subtitle">Words that changed history</p>
-  </header>
+<h1>🔥 Smart Quote Generator</h1>
 
-  <div class="tags" id="tags"></div>
-
-  <div class="quote-card" id="card">
-    <div class="quote-text" id="q-text"></div>
-    <div class="meta">
-      <div class="avatar" id="q-avatar"></div>
-      <div>
-        <div class="name" id="q-name"></div>
-        <div class="field" id="q-field"></div>
-        <span class="era-pill" id="q-era"></span>
-      </div>
-    </div>
-  </div>
-
-  <div class="controls">
-    <button class="btn-next" onclick="next()">Next quote &rarr;</button>
-    <button class="btn-shuffle" onclick="shuffle()">Shuffle</button>
-  </div>
-
-  <p class="counter" id="counter"></p>
-
-  <footer>Built with AI &nbsp;|&nbsp; PRCBO TECH Internship 2026</footer>
+<!-- FILTER BUTTONS -->
+<div>
+  <button onclick="setMood('all')" id="all">All</button>
+  <button onclick="setMood('deep')" id="deep">🧠 Deep</button>
+  <button onclick="setMood('motivation')" id="motivation">💪 Motivation</button>
+  <button onclick="setMood('f1')" id="f1">🏎️ F1</button>
 </div>
 
+<!-- QUOTE DISPLAY -->
+<p id="quote"></p>
+<p id="author"></p>
+<p id="meaning"></p>
+
+<button onclick="nextQuote()">Next Quote</button>
+
 <script>
+
+// ================= DATA =================
 const quotes = [
-  { quote: "Well-behaved women seldom make history.", name: "Laurel Thatcher Ulrich", field: "Historian", era: "Academia", tag: "academia" },
-  { quote: "I am no bird; and no net ensnares me.", name: "Charlotte Brontë", field: "Author", era: "Literature", tag: "literature" },
-  { quote: "I raise up my voice — not so that I can shout, but so that those without a voice can be heard.", name: "Malala Yousafzai", field: "Activist", era: "Modern", tag: "activism" },
-  { quote: "Think like a queen. A queen is not afraid to fail.", name: "Oprah Winfrey", field: "Media Mogul", era: "Modern", tag: "modern" },
-  { quote: "I am not afraid of storms, for I am learning how to sail my ship.", name: "Louisa May Alcott", field: "Author", era: "Literature", tag: "literature" },
-  { quote: "The most courageous act is still to think for yourself. Aloud.", name: "Coco Chanel", field: "Fashion Pioneer", era: "Style", tag: "modern" },
-  { quote: "Power is not given to you. You have to take it.", name: "Beyoncé", field: "Artist & Entrepreneur", era: "Modern", tag: "modern" },
-  { quote: "No one can make you feel inferior without your consent.", name: "Eleanor Roosevelt", field: "First Lady & Diplomat", era: "Politics", tag: "politics" },
-  { quote: "I am not going to limit myself just because people won't accept the fact that I can do something else.", name: "Dolly Parton", field: "Musician & Businesswoman", era: "Modern", tag: "modern" },
-  { quote: "We realize the importance of our voices only when we are silenced.", name: "Malala Yousafzai", field: "Activist", era: "Modern", tag: "activism" },
-  { quote: "I am my own muse. I am the subject I know best.", name: "Frida Kahlo", field: "Artist", era: "Art", tag: "art" },
-  { quote: "Knowing what must be done does away with fear.", name: "Rosa Parks", field: "Civil Rights Activist", era: "Politics", tag: "activism" },
-  { quote: "I was not designed to be forced.", name: "Harriet Tubman", field: "Abolitionist", era: "History", tag: "activism" },
-  { quote: "A woman with a voice is, by definition, a strong woman.", name: "Melinda Gates", field: "Philanthropist", era: "Modern", tag: "modern" },
-  { quote: "The most alluring thing a woman can have is confidence.", name: "Beyoncé", field: "Artist & Entrepreneur", era: "Modern", tag: "modern" },
-  { quote: "I am too intelligent, too demanding, and too resourceful for anyone to be able to take charge of me entirely.", name: "Simone de Beauvoir", field: "Philosopher", era: "Academia", tag: "academia" },
-  { quote: "If you want something said, ask a man; if you want something done, ask a woman.", name: "Margaret Thatcher", field: "Prime Minister", era: "Politics", tag: "politics" },
-  { quote: "I paint my own reality.", name: "Frida Kahlo", field: "Artist", era: "Art", tag: "art" },
-  { quote: "Do not wait for leaders; do it alone, person to person.", name: "Mother Teresa", field: "Humanitarian", era: "Modern", tag: "activism" },
-  { quote: "Above all, be the heroine of your life, not the victim.", name: "Nora Ephron", field: "Writer & Director", era: "Literature", tag: "literature" },
+
+  // DEEP
+  { text: "To live is to suffer, to survive is to find meaning.", author: "Fyodor Dostoevsky", mood: "deep", meaning: "Life is hard, but purpose gives strength." },
+  { text: "The darker the night, the brighter the stars.", author: "Fyodor Dostoevsky", mood: "deep", meaning: "Hard times reveal strength." },
+  { text: "If you want to be happy, be.", author: "Leo Tolstoy", mood: "deep", meaning: "Happiness is a choice." },
+  { text: "Love is life.", author: "Leo Tolstoy", mood: "deep", meaning: "Love gives meaning to everything." },
+
+  // MOTIVATION
+  { text: "Success is not final, failure is not fatal.", author: "Winston Churchill", mood: "motivation", meaning: "Keep going." },
+  { text: "Small steps every day lead to big results.", author: "Unknown", mood: "motivation", meaning: "Consistency wins." },
+  { text: "Dream big. Start small. Act now.", author: "Robin Sharma", mood: "motivation", meaning: "Execution matters." },
+
+  // F1
+  { text: "I just focus on driving fast.", author: "Max Verstappen", mood: "f1", meaning: "Focus brings results." },
+  { text: "Pressure is a privilege.", author: "Charles Leclerc", mood: "f1", meaning: "Pressure means opportunity." },
+  { text: "You learn more from losing than winning.", author: "Lewis Hamilton", mood: "f1", meaning: "Failure teaches growth." }
+
 ];
 
-const tagList = ["all", "modern", "activism", "literature", "politics", "art", "academia"];
-let activeTag = "all";
-let filtered = [...quotes];
-let idx = 0;
+// ================= LOGIC =================
+let currentMood = "all";
+let usedIndexes = [];
 
-function initials(name) {
-  return name.split(" ").filter(w => w.length > 2).map(w => w[0]).join("").slice(0, 2).toUpperCase();
+// SET FILTER
+function setMood(mood) {
+  currentMood = mood;
+  usedIndexes = [];
+
+  // highlight active button
+  document.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
+  document.getElementById(mood).classList.add("active");
+
+  nextQuote();
 }
 
-function renderTags() {
-  document.getElementById("tags").innerHTML = tagList.map(t =>
-    `<span class="tag${t === activeTag ? ' active' : ''}" onclick="setTag('${t}')">${t}</span>`
-  ).join("");
+// FILTER DATA
+function getFilteredQuotes() {
+  if (currentMood === "all") return quotes;
+  return quotes.filter(q => q.mood === currentMood);
 }
 
-function setTag(t) {
-  activeTag = t;
-  filtered = t === "all" ? [...quotes] : quotes.filter(q => q.tag === t);
-  idx = 0;
-  renderTags();
-  show(filtered[0], 1);
+// SMART RANDOM (NO REPEAT)
+function nextQuote() {
+
+  let filtered = getFilteredQuotes();
+
+  if (usedIndexes.length === filtered.length) {
+    usedIndexes = [];
+  }
+
+  let randomIndex;
+
+  do {
+    randomIndex = Math.floor(Math.random() * filtered.length);
+  } while (usedIndexes.includes(randomIndex));
+
+  usedIndexes.push(randomIndex);
+
+  let q = filtered[randomIndex];
+
+  // DISPLAY
+  document.getElementById("quote").innerText = q.text;
+  document.getElementById("author").innerText = "- " + q.author;
+  document.getElementById("meaning").innerText = "👉 " + q.meaning;
 }
 
-function show(q, i) {
-  const card = document.getElementById("card");
-  card.classList.add("fade");
-  setTimeout(() => {
-    document.getElementById("q-text").textContent = "\u201C" + q.quote + "\u201D";
-    document.getElementById("q-name").textContent = q.name;
-    document.getElementById("q-field").textContent = q.field;
-    document.getElementById("q-era").textContent = q.era;
-    document.getElementById("q-avatar").textContent = initials(q.name);
-    document.getElementById("counter").textContent = i + " of " + filtered.length + " quotes";
-    card.classList.remove("fade");
-  }, 320);
-}
+// START
+setMood("all");
 
-function next() {
-  idx = (idx + 1) % filtered.length;
-  show(filtered[idx], idx + 1);
-}
-
-function shuffle() {
-  const r = Math.floor(Math.random() * filtered.length);
-  idx = r;
-  show(filtered[idx], idx + 1);
-}
-
-renderTags();
-show(filtered[0], 1);
 </script>
+
 </body>
 </html>
