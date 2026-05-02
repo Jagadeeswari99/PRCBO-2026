@@ -96,7 +96,7 @@ Sample UI Description
 Live App
 
 > Open `index.html` in any browser — no installation required.
-> Can be hosted using **GitHub Pages** for sharing.
+> use https://jagadeeswari99.github.io/PRCBO-2026/ to open
 
 ---
 
