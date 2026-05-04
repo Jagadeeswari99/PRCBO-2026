@@ -102,15 +102,9 @@ const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
 - `.env` is listed in `.gitignore` — never pushed to GitHub
 - Use `import.meta.env.VITE_GEMINI_KEY` to access safely in Vite
 
-## 👩‍💻 Built By
-
-**Jagadeeswari** — Data Science Researcher  
-Thiruvalluvar University, Vellore
-
 ---
 
 *Submitted for PRCBO-2026 Task 3: API + AI Integration Basics*
-EOF
 ```
 
 Then push it to GitHub:
