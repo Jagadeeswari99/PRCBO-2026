@@ -95,7 +95,6 @@ const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
   }),
 });
 ```
-
 ## 🛡️ Security
 
 - API key stored in `.env` file
