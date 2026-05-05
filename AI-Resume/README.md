@@ -10,13 +10,17 @@ This project is a smart resume analyzer built with React. It supports:
 - Styled, responsive UI for desktop and mobile
 
 ## AI Integration
-The app uses OpenRouter AI when you provide a free API key in `.env`.
-If no key is configured, the app still works with a local heuristic analysis engine.
+The app uses OpenRouter AI via a Netlify serverless function to keep API keys secure.
+- In production (Netlify), set `OPENROUTER_KEY` in site environment variables.
+- For local development, set `VITE_OPENROUTER_KEY` in `.env`.
+- If no API key is configured, the app falls back to local heuristic analysis.
 
 ## Setup
 1. npm install
-2. Copy `.env.example` to `.env`
-3. Add your OpenRouter API key as `VITE_OPENROUTER_KEY` (optional)
+2. Copy `.env.example` to `.env` (for local dev)
+3. For Netlify deployment:
+   - Set `OPENROUTER_KEY` in Netlify site environment variables
+   - The Netlify function handles the API calls securely
 
 ## Run
 npm run dev

@@ -173,46 +173,29 @@ function parseOpenRouterResponse(text) {
 }
 
 async function analyzeWithOpenRouter(content) {
-  const prompt = `Analyze this resume and return only valid JSON with the fields: ats_score (0-100), summary, suggestions (array of strings), section_scores (skills, experience, keywords), and missing_keywords (array of missing skill keywords). Resume:\n${content}`;
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
+  const response = await fetch('/.netlify/functions/openrouter', {
+    method: 'POST',
     headers: {
-      Authorization: "Bearer " + import.meta.env.VITE_OPENROUTER_KEY,
-      "Content-Type": "application/json"
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: "You are a resume analyst. Reply only with valid JSON and no extra explanation."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      max_tokens: 350,
-      temperature: 0.0,
-      top_p: 1.0
-    })
+    body: JSON.stringify({ content }),
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(`OpenRouter error ${response.status}: ${message}`);
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to analyze resume');
   }
 
   const data = await response.json();
-  const rawText = data.choices?.[0]?.message?.content || "";
+  const rawText = data.rawText;
 
   const parsed = parseOpenRouterResponse(rawText);
   if (!parsed) {
     return {
-      source: "OpenRouter AI",
+      source: 'OpenRouter AI',
       score: estimateAtsScore(content),
-      summary: "Could not parse AI response cleanly; fallback heuristic analysis applied.",
-      suggestions: [rawText || "No suggestions were returned by the API."],
+      summary: 'Could not parse AI response cleanly; fallback heuristic analysis applied.',
+      suggestions: [rawText || 'No suggestions were returned by the API.'],
       sectionScores: calculateSectionScores(content, skillKeywords.filter((skill) => content.toLowerCase().includes(skill.toLowerCase()))),
       missingKeywords: skillKeywords.filter((skill) => !content.toLowerCase().includes(skill.toLowerCase())).slice(0, 6)
     };
@@ -284,14 +267,11 @@ export default function App() {
 
     setLoading(true);
     try {
-      if (import.meta.env.VITE_OPENROUTER_KEY) {
-        const result = await analyzeWithOpenRouter(resumeText);
-        setAnalysis(result);
-      } else {
-        setAnalysis(generateLocalAnalysis(resumeText));
-      }
+      const result = await analyzeWithOpenRouter(resumeText);
+      setAnalysis(result);
     } catch (err) {
-      setError(`Analysis failed: ${err.message}`);
+      // Fallback to local analysis if AI fails
+      setAnalysis(generateLocalAnalysis(resumeText));
     } finally {
       setLoading(false);
     }
@@ -341,10 +321,10 @@ export default function App() {
             {loading ? "Analyzing resume..." : "Analyze Resume"}
           </button>
           {error && <div className="error-banner">{error}</div>}
-          {import.meta.env.VITE_OPENROUTER_KEY ? (
+          {analysis && analysis.source === 'OpenRouter AI' ? (
             <p className="hint">Using OpenRouter AI for recommendations.</p>
           ) : (
-            <p className="hint">No OpenRouter key found. Falling back to local heuristic analysis.</p>
+            <p className="hint">Using local heuristic analysis.</p>
           )}
         </div>
       </div>
