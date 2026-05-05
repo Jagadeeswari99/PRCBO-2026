@@ -1,16 +1,12 @@
+🚀 PRCBO TECH — Internship Tasks
+Jagadeeswari J M | Software Development Intern | May-June 2026
 
-# Resume Analyzer (React + OpenRouter)
+👩‍💻 About Me
+I'm a Data Science student and researcher at Annamalai University, Cuddalore, with a strong interest in motorsport analytics, machine learning, and AI systems.
 
-## Setup
-1. npm install
-2. Rename .env.example to .env
-3. Add your OpenRouter API key
+Task1 - AI Generated Functions in Python
 
-## Run
-npm run dev
+Task 2 -  Quote Generator using AI 
+Live App Link -  https://jagadeeswari99.github.io/PRCBO-2026/
 
-## Build
-npm run build
-
-## Deploy to Netlify
-- Upload dist folder
+Task3 - API & AI Integration Built an AI Q&A APP using Open router API

@@ -1,13 +1,149 @@
-
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Resume Analyzer</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<html>
+<head>
+  <title>Smart Quote Generator</title>
+
+  <style>
+    body {
+      background: #0f0f0f;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #222;
+      color: white;
+    }
+
+    button:hover {
+      background: #444;
+    }
+
+    .active {
+      background: #ff4d6d;
+    }
+
+    #quote {
+      font-size: 22px;
+      margin: 30px;
+    }
+
+    #author {
+      font-weight: bold;
+    }
+
+    #meaning {
+      color: #aaa;
+      margin-top: 10px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<h1>🔥 Smart Quote Generator</h1>
+
+<!-- FILTER BUTTONS -->
+<div>
+  <button onclick="setMood('all')" id="all">All</button>
+  <button onclick="setMood('deep')" id="deep">🧠 Deep</button>
+  <button onclick="setMood('motivation')" id="motivation">💪 Motivation</button>
+  <button onclick="setMood('f1')" id="f1">🏎️ F1</button>
+</div>
+
+<!-- QUOTE DISPLAY -->
+<p id="quote"></p>
+<p id="author"></p>
+<p id="meaning"></p>
+
+<button onclick="nextQuote()">Next Quote</button>
+
+<script>
+
+// ================= DATA =================
+const quotes = [
+
+  // DEEP
+  { text: "To live is to suffer, to survive is to find meaning.", author: "Fyodor Dostoevsky", mood: "deep", meaning: "Life is hard, but purpose gives strength." },
+  { text: "The darker the night, the brighter the stars.", author: "Fyodor Dostoevsky", mood: "deep", meaning: "Hard times reveal strength." },
+  { text: "If you want to be happy, be.", author: "Leo Tolstoy", mood: "deep", meaning: "Happiness is a choice." },
+  { text: "Love is life.", author: "Leo Tolstoy", mood: "deep", meaning: "Love gives meaning to everything." },
+
+  // MOTIVATION
+  { text: "Success is not final, failure is not fatal.", author: "Winston Churchill", mood: "motivation", meaning: "Keep going." },
+  { text: "Small steps every day lead to big results.", author: "Unknown", mood: "motivation", meaning: "Consistency wins." },
+  { text: "Dream big. Start small. Act now.", author: "Robin Sharma", mood: "motivation", meaning: "Execution matters." },
+
+  // F1
+  { text: "I just focus on driving fast.", author: "Max Verstappen", mood: "f1", meaning: "Focus brings results." },
+  { text: "Pressure is a privilege.", author: "Charles Leclerc", mood: "f1", meaning: "Pressure means opportunity." },
+  { text: "You learn more from losing than winning.", author: "Lewis Hamilton", mood: "f1", meaning: "Failure teaches growth." }
+
+];
+
+// ================= LOGIC =================
+let currentMood = "all";
+let usedIndexes = [];
+
+// SET FILTER
+function setMood(mood) {
+  currentMood = mood;
+  usedIndexes = [];
+
+  // highlight active button
+  document.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
+  document.getElementById(mood).classList.add("active");
+
+  nextQuote();
+}
+
+// FILTER DATA
+function getFilteredQuotes() {
+  if (currentMood === "all") return quotes;
+  return quotes.filter(q => q.mood === currentMood);
+}
+
+// SMART RANDOM (NO REPEAT)
+function nextQuote() {
+
+  let filtered = getFilteredQuotes();
+
+  if (usedIndexes.length === filtered.length) {
+    usedIndexes = [];
+  }
+
+  let randomIndex;
+
+  do {
+    randomIndex = Math.floor(Math.random() * filtered.length);
+  } while (usedIndexes.includes(randomIndex));
+
+  usedIndexes.push(randomIndex);
+
+  let q = filtered[randomIndex];
+
+  // DISPLAY
+  document.getElementById("quote").innerText = q.text;
+  document.getElementById("author").innerText = "- " + q.author;
+  document.getElementById("meaning").innerText = "👉 " + q.meaning;
+}
+
+// START
+setMood("all");
+
+</script>
+
+</body>
 </html>
