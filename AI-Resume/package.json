@@ -11,6 +11,7 @@
     "deploy": "npx netlify deploy --prod --dir=dist"
   },
   "dependencies": {
+    "jspdf": "^2.5.1",
     "pdfjs-dist": "^3.11.122",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

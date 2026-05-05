@@ -1,3 +1,24 @@
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f3f6fb;
+  color: #111827;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark {
+  background: #111827;
+  color: #f9fafb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .page-shell {
   max-width: 1080px;
   margin: 0 auto;
@@ -414,4 +435,130 @@ h1 {
   .hero-panel {
     grid-template-columns: 1fr;
   }
+}
+
+body.dark .card {
+  background: #1f2937;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f9fafb;
+}
+
+body.dark .drop-zone {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+body.dark .file-preview {
+  background: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+body.dark .score-summary-card {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+body.dark .section-card {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+body.dark .suggestion-card {
+  background: #1f2937;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.landing-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.landing-content {
+  text-align: center;
+  max-width: 600px;
+  padding: 40px;
+}
+
+.landing-content h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.landing-content p {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  opacity: 0.9;
+}
+
+.landing-button {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.landing-button:hover {
+  transform: scale(1.05);
+}
+
+.dark-mode-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.role-selector {
+  margin-bottom: 20px;
+}
+
+.role-selector label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.role-selector select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #f8fafc;
+}
+
+.results-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.download-button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.download-button:hover {
+  background: #1d4ed8;
 }

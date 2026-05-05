@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
+import jsPDF from "jspdf";
 import "./App.css";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
@@ -172,13 +173,13 @@ function parseOpenRouterResponse(text) {
   };
 }
 
-async function analyzeWithOpenRouter(content) {
+async function analyzeWithOpenRouter(content, role) {
   const response = await fetch('/.netlify/functions/openrouter', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ content, role }),
   });
 
   if (!response.ok) {
@@ -211,6 +212,13 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [dragging, setDragging] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
+  const [selectedRole, setSelectedRole] = useState("general");
+
+  useEffect(() => {
+    document.body.classList.toggle("dark", darkMode);
+  }, [darkMode]);
 
   const handleFile = async (file) => {
     if (!file) return;
@@ -252,9 +260,37 @@ export default function App() {
     setDragging(true);
   };
 
-  const handleDragLeave = (event) => {
-    event.preventDefault();
-    setDragging(false);
+  const downloadReport = () => {
+    if (!analysis) return;
+
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text("AI Resume Analysis Report", 20, 30);
+
+    doc.setFontSize(14);
+    doc.text(`ATS Score: ${analysis.score}/100`, 20, 50);
+    doc.text(`Source: ${analysis.source}`, 20, 60);
+
+    doc.setFontSize(12);
+    doc.text("Summary:", 20, 80);
+    const summaryLines = doc.splitTextToSize(analysis.summary, 170);
+    doc.text(summaryLines, 20, 90);
+
+    if (analysis.sectionScores) {
+      doc.text("Section Scores:", 20, 120);
+      doc.text(`Skills: ${analysis.sectionScores.skills}%`, 20, 130);
+      doc.text(`Experience: ${analysis.sectionScores.experience}%`, 20, 140);
+      doc.text(`Keywords: ${analysis.sectionScores.keywords}%`, 20, 150);
+    }
+
+    doc.text("Suggestions:", 20, 170);
+    analysis.suggestions.forEach((suggestion, index) => {
+      const y = 180 + index * 10;
+      const lines = doc.splitTextToSize(`• ${suggestion}`, 170);
+      doc.text(lines, 20, y);
+    });
+
+    doc.save("resume-analysis-report.pdf");
   };
 
   const handleAnalyze = async () => {
@@ -267,7 +303,7 @@ export default function App() {
 
     setLoading(true);
     try {
-      const result = await analyzeWithOpenRouter(resumeText);
+      const result = await analyzeWithOpenRouter(resumeText, selectedRole);
       setAnalysis(result);
     } catch (err) {
       // Fallback to local analysis if AI fails
@@ -277,10 +313,30 @@ export default function App() {
     }
   };
 
+  if (showLanding) {
+    return (
+      <div className="landing-page">
+        <div className="landing-content">
+          <button className="dark-mode-toggle" onClick={() => setDarkMode(!darkMode)}>
+            {darkMode ? "☀️ Light" : "🌙 Dark"}
+          </button>
+          <h1>AI Resume Analyzer</h1>
+          <p>Upload your resume and get instant ATS scoring, personalized suggestions, and professional insights to land your dream job.</p>
+          <button className="landing-button" onClick={() => setShowLanding(false)}>
+            Analyze Resume
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-shell">
       <div className="hero-panel">
         <div>
+          <button className="dark-mode-toggle" onClick={() => setDarkMode(!darkMode)}>
+            {darkMode ? "☀️ Light" : "🌙 Dark"}
+          </button>
           <p className="eyebrow">AI Resume Analyzer</p>
           <h1>Smart resume analysis with clean feedback</h1>
           <p className="hero-copy">
@@ -292,6 +348,15 @@ export default function App() {
           <div className="input-header">
             <span>Resume Input</span>
             <span className="chip">{pdfName || "Text / PDF"}</span>
+          </div>
+          <div className="role-selector">
+            <label>Target Role:</label>
+            <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+              <option value="general">General</option>
+              <option value="data-scientist">Data Scientist</option>
+              <option value="web-developer">Web Developer</option>
+              <option value="analyst">Analyst</option>
+            </select>
           </div>
           <div
             className={`drop-zone ${dragging ? "dragging" : ""}`}
@@ -336,7 +401,10 @@ export default function App() {
               <p className="section-title">Analysis Results</p>
               <p className="subtle">ATS score, summary, and skill suggestions appear here.</p>
             </div>
-            {analysis && <span className="badge">{analysis.source}</span>}
+            <div className="results-actions">
+              {analysis && <span className="badge">{analysis.source}</span>}
+              {analysis && <button className="download-button" onClick={downloadReport}>📄 Download PDF</button>}
+            </div>
           </div>
 
           {analysis ? (

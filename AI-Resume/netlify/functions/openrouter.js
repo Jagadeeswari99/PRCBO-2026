@@ -4,7 +4,7 @@ export default async function handler(request, context) {
   }
 
   try {
-    const { content } = await request.json();
+    const { content, role } = await request.json();
 
     if (!content) {
       return new Response(JSON.stringify({ error: 'Resume content is required' }), {
@@ -13,7 +13,14 @@ export default async function handler(request, context) {
       });
     }
 
-    const prompt = `Analyze this resume and return only valid JSON with the fields: ats_score (0-100), summary, suggestions (array of strings), section_scores (skills, experience, keywords), and missing_keywords (array of missing skill keywords). Resume:\n${content}`;
+    const rolePrompts = {
+      general: '',
+      'data-scientist': 'Focus on data science skills like Python, R, machine learning, statistics.',
+      'web-developer': 'Focus on web development skills like JavaScript, React, Node.js, HTML/CSS.',
+      analyst: 'Focus on analytical skills like SQL, Excel, data visualization, business intelligence.'
+    };
+
+    const prompt = `Analyze this resume for a ${role} role and return only valid JSON with the fields: ats_score (0-100), summary, suggestions (array of strings), section_scores (skills, experience, keywords), and missing_keywords (array of missing skill keywords). ${rolePrompts[role] || ''} Resume:\n${content}`;
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
