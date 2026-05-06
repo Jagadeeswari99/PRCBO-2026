@@ -260,6 +260,11 @@ export default function App() {
     setDragging(true);
   };
 
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    setDragging(false);
+  };
+
   const downloadReport = () => {
     if (!analysis) return;
 

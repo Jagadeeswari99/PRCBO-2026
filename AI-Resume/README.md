@@ -13,7 +13,7 @@ This project is a smart resume analyzer built with React. It supports:
 The app uses OpenRouter AI via a Netlify serverless function to keep API keys secure.
 - In production (Netlify), set `OPENROUTER_KEY` in site environment variables.
 - For local development, set `VITE_OPENROUTER_KEY` in `.env`.
-- If no API key is configured, the app falls back to local heuristic analysis.
+- If no API key is configured or the API fails, the app falls back to local heuristic analysis.
 
 ## Setup
 1. npm install
@@ -22,8 +22,14 @@ The app uses OpenRouter AI via a Netlify serverless function to keep API keys se
    - Set `OPENROUTER_KEY` in Netlify site environment variables
    - The Netlify function handles the API calls securely
 
-## Run
-npm run dev
+## Run Locally
+For full functionality including AI analysis:
+1. Install Netlify CLI: `npm install -g netlify-cli`
+2. Set `VITE_OPENROUTER_KEY` in `.env` with your OpenRouter API key
+3. Run `netlify dev`
+
+For basic functionality with local analysis only:
+- Run `npm run dev` (Vite only, no AI analysis)
 
 ## Build
 npm run build
